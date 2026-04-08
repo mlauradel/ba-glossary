@@ -1,0 +1,294 @@
+
+<style>
+:root {
+  --bg: #0b1020;
+  --bg-card: rgba(20, 28, 48, 0.92);
+  --border: rgba(255,255,255,0.08);
+  --border-strong: rgba(255,255,255,0.14);
+  --text: #eef2ff;
+  --text-soft: #b8c0db;
+  --text-muted: #8892b0;
+  --accent: #7c9cff;
+  --accent-2: #8b5cf6;
+  --shadow: 0 18px 40px rgba(0,0,0,0.35);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Inter, system-ui, sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(124,156,255,0.16), transparent 35%),
+    radial-gradient(circle at top right, rgba(139,92,246,0.12), transparent 30%),
+    var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 24px;
+  line-height: 1.6;
+}
+
+.wrap {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 32px 0 64px;
+}
+
+.search-bar {
+  width: 100%;
+  padding: 16px 18px;
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.04);
+  color: var(--text);
+  font-size: 15px;
+  margin-bottom: 20px;
+}
+
+.search-bar::placeholder {
+  color: var(--text-muted);
+}
+
+.search-bar:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(124,156,255,0.16);
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.filter-btn {
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.03);
+  color: var(--text-soft);
+  border-radius: 999px;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-btn:hover {
+  transform: translateY(-1px);
+  color: var(--text);
+}
+
+.filter-btn.active {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: white;
+  border-color: transparent;
+}
+
+.count {
+  color: var(--text-muted);
+  font-size: 13px;
+  margin-bottom: 18px;
+}
+
+#cards {
+  display: grid;
+  gap: 16px;
+}
+
+.term-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 20px 22px;
+  box-shadow: var(--shadow);
+  transition: 0.2s ease;
+}
+
+.term-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(124,156,255,0.35);
+}
+
+.term-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.term-name {
+  font-size: 1.08rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.tag {
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.tag-core {
+  background: rgba(124,156,255,0.18);
+  color: #b9caff;
+}
+
+.tag-discovery {
+  background: rgba(34,197,94,0.16);
+  color: #9ae6b4;
+}
+
+.tag-process {
+  background: rgba(250,204,21,0.14);
+  color: #fde68a;
+}
+
+.tag-data {
+  background: rgba(249,115,22,0.16);
+  color: #fdba74;
+}
+
+.tag-testing {
+  background: rgba(244,114,182,0.14);
+  color: #f9a8d4;
+}
+
+.tag-comms {
+  background: rgba(168,85,247,0.16);
+  color: #d8b4fe;
+}
+
+.def {
+  color: var(--text-soft);
+  margin-bottom: 14px;
+}
+
+.real {
+  color: var(--text-muted);
+  padding: 14px 16px;
+  border-left: 3px solid var(--accent);
+  border-radius: 0 14px 14px 0;
+  background: rgba(124,156,255,0.08);
+}
+
+.real strong {
+  color: var(--text);
+}
+
+@media (max-width: 640px) {
+  body {
+    padding: 14px;
+  }
+
+  .filters {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+  }
+
+  .filter-btn {
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .term-card {
+    padding: 18px;
+  }
+}
+</style>
+
+<div class="wrap">
+<h2 class="sr-only">BA Glossary — terms mapped to real-world ISV discovery context</h2>
+<input class="search-bar" type="text" placeholder="Search terms..." id="search" oninput="filter()">
+<div class="filters">
+  <button class="filter-btn active" onclick="setTag('all',this)">All</button>
+  <button class="filter-btn" onclick="setTag('core',this)">Core BA</button>
+  <button class="filter-btn" onclick="setTag('discovery',this)">Discovery</button>
+  <button class="filter-btn" onclick="setTag('process',this)">Process</button>
+  <button class="filter-btn" onclick="setTag('data',this)">Data</button>
+  <button class="filter-btn" onclick="setTag('testing',this)">Testing</button>
+  <button class="filter-btn" onclick="setTag('comms',this)">Comms</button>
+</div>
+<div class="count" id="count"></div>
+<div id="cards"></div>
+</div>
+<script>
+const terms=[
+{name:"User Story",tag:"core",def:"A short, structured requirement written from the end user's perspective: 'As a [user], I want [goal] so that [benefit].'",real:"<strong>In your work:</strong> The SE's discovery app will help SEs capture what prospects need. You'll likely write user stories to define what the app itself should do — and also what the SE's clients need from Salesforce."},
+{name:"Acceptance Criteria",tag:"core",def:"Pass/fail conditions that define when a user story is successfully complete. States intent, not solution. Must be independently testable (true/false).",real:"<strong>In your work:</strong> Every feature you help implement needs this — it's how you and the SE agree 'yes, this is done.' No vague handshakes."},
+{name:"INVEST Checklist",tag:"core",def:"A quality check for user stories: Independent, Negotiable, Valuable, Estimable, Small, Testable. If a story fails any check, it needs a rewrite.",real:"<strong>In your work:</strong> Use this mentally when reviewing any story before handing it to a dev or admin. Saves rework."},
+{name:"Elicitation",tag:"discovery",def:"The practice of 'drawing out' requirements from stakeholders — through interviews, observation, workshops, surveys, prototyping, brainstorming. Requirements live in people's heads, not documents.",real:"<strong>In your work:</strong> This is the core of what the SE's discovery app is designed to help with. Discovery = elicitation. When you talk to SEs or their prospects, you are doing elicitation."},
+{name:"Customer Discovery",tag:"discovery",def:"Understanding a client's current business goals, their existing Salesforce setup, and identifying opportunities to improve it. Covers stakeholders, change management, product roadmaps, and the implementation lifecycle.",real:"<strong>In your work:</strong> This is 17% of the BA exam AND literally what the SE's app is about. Focus here hard."},
+{name:"Stakeholder",tag:"discovery",def:"Anyone affected by or with influence over a project — internal (owner, manager, employee) or external (customer, partner, regulator). Not everyone is equally important; identify the right people, not just the most available ones.",real:"<strong>In your work:</strong> The SE navigates stakeholders at client companies. Your job as BA is to map who matters, even if they're hard to reach — especially them."},
+{name:"Attention Trap",tag:"discovery",def:"The mistake of prioritizing the most responsive stakeholders over the most important ones. Ease of access does not equal importance.",real:"<strong>In your work:</strong> In any discovery call or project, the chatty person isn't always the decision-maker. Find the quiet VP."},
+{name:"Information Discovery",tag:"discovery",def:"The groundwork phase where a BA systematically gathers facts using who/what/where/why/when/how questions. Without solid info, teams assume and jump to wrong conclusions.",real:"<strong>In your work:</strong> Before building anything, ask exhaustive questions. The SE has done this for five years — watch how he does it."},
+{name:"Process Map / Business Process Flow",tag:"process",def:"A visual, step-by-step diagram of actions, decisions, handoffs, people, and systems in a business process. The single most powerful early-project tool for understanding the customer.",real:"<strong>In your work:</strong> When the SE shows you how SEs currently do discovery (pen/paper, spreadsheets, etc.), mapping that current state is your first job."},
+{name:"UPN (Universal Process Notation)",tag:"process",def:"A simple, stakeholder-friendly format for process maps. Each box = one action (verb phrase). Shows who, what, when, why, and systems used. Max 8-10 boxes per diagram — drill down for detail.",real:"<strong>In your work:</strong> Use this when mapping the SE's app workflows. It's clean enough that the SE can validate it without being a BA."},
+{name:"SIPOC",tag:"process",def:"Suppliers, Inputs, Process, Outputs, Customers. A quick-scope tool used before going into detailed process mapping. Defines the edges of what you're mapping.",real:"<strong>In your work:</strong> Great for scoping the discovery app's core workflow before going deeper."},
+{name:"Current State vs. Future State",tag:"process",def:"'As-is' documents how things work today (warts and all). 'To-be' defines what the improved process looks like. Never skip mapping the current state before designing the future one.",real:"<strong>In your work:</strong> The SE's app is solving a current-state problem (bad discovery process). Map it before building."},
+{name:"Gap Analysis",tag:"process",def:"The difference between how things work today (current state) and how they should work (desired state). Forms the basis for requirements.",real:"<strong>In your work:</strong> After mapping the SE's discovery process, the gap = what the app needs to fill."},
+{name:"RACI Chart",tag:"process",def:"Responsible, Accountable, Consulted, Informed. Clarifies ownership at each step of a process or project. Prevents 'I thought you were doing that.'",real:"<strong>In your work:</strong> Use this when the SE brings in contractors or other helpers. Who owns what?"},
+{name:"Journey Map",tag:"process",def:"A visual document capturing the full experience a customer has — steps, feelings, thoughts, touchpoints, pain points — from their perspective, not the company's.",real:"<strong>In your work:</strong> Think about the SE's user (another SE) — what does their discovery experience feel like today? Frustrating? Chaotic? Map that emotional journey."},
+{name:"SE (Sales Engineer / Solutions Engineer)",tag:"discovery",def:"A technical sales role that bridges product demos and customer requirements. SEs guide prospects through how a product solves their specific problems. Your mentor is one.",real:"<strong>In your work:</strong> The entire app is built for SEs. Understanding their workflow deeply is your most important job right now."},
+{name:"ISV (Independent Software Vendor)",tag:"discovery",def:"A company that builds and sells software products on top of a platform (like Salesforce AppExchange). Your SE contact is on his third ISV company.",real:"<strong>In your work:</strong> The SE's app will be sold as an ISV product on Salesforce. Understanding the ISV go-to-market motion helps you understand what 'success' means for the product."},
+{name:"Sandbox",tag:"testing",def:"A Salesforce test environment that mirrors production but is safe to experiment in. All UAT happens here before going live.",real:"<strong>In your work:</strong> Any implementation or testing you do should happen in a sandbox first. Never touch production without UAT sign-off."},
+{name:"UAT (User Acceptance Testing)",tag:"testing",def:"The final testing phase before go-live. Conducted by end users and stakeholders in a sandbox to verify what was built matches what was asked for. Ends in a pass/go-live or fail/don't-go-live decision.",real:"<strong>In your work:</strong> You'll likely help coordinate UAT as the SE's app features get built. It's your professional stamp of approval — don't skip prep."},
+{name:"Go/No-Go Decision",tag:"testing",def:"The formal call made at the end of UAT on whether to deploy to production. Based on whether open issues are acceptable risks or blockers.",real:"<strong>In your work:</strong> When something is ready to ship, you help make this call. It requires confidence in your requirements and test results."},
+{name:"Happy Path vs. Negative Testing",tag:"testing",def:"Happy path = testing the expected, ideal flow. Negative testing = testing what happens when things go wrong or users behave unexpectedly. Both are required.",real:"<strong>In your work:</strong> Don't just test 'SE fills in discovery form perfectly.' Test 'SE skips fields, enters garbage data, goes back mid-flow.'"},
+{name:"KPI (Key Performance Indicator)",tag:"data",def:"A quantifiable metric used to measure performance against a goal. Used in descriptive analytics to summarize what's happening.",real:"<strong>In your work:</strong> How will you and the SE know the discovery app is working? Define KPIs early — e.g. time saved per discovery call, completion rate of templates."},
+{name:"Descriptive Analytics",tag:"data",def:"The simplest analytics type — tells you what happened or what's going on right now. Summarizes data for stakeholders via KPIs and dashboards.",real:"<strong>In your work:</strong> The discovery app will probably surface descriptive analytics (e.g. 'You've done 12 discovery sessions this month'). Know what this is."},
+{name:"Data Quality (6 Dimensions)",tag:"data",def:"Consistency, Completeness, Correctness, Currency/Timeliness, Context, Compliance. Data must meet all six to be trustworthy.",real:"<strong>In your work:</strong> If the app stores discovery data, it's only useful if it's clean. Push the SE to think about this early."},
+{name:"FRS (Functional Requirements Specification)",tag:"core",def:"A document describing what the system should do from the business and end-user perspective. Different from SRS (System Requirements Specification) which covers technical behavior.",real:"<strong>In your work:</strong> You might help write an FRS for the discovery app features. It's the 'what' before the devs write the 'how.'"},
+{name:"Quick Win",tag:"core",def:"An early deliverable that creates visible value quickly, before the full project is complete. Builds stakeholder trust and project momentum.",real:"<strong>In your work:</strong> As you start helping the SE, propose a quick win early — a simple feature, a clean process map, something tangible. It builds your credibility."},
+{name:"Scope Creep",tag:"core",def:"The gradual expansion of a project beyond its original agreed boundaries, usually through uncontrolled requirement additions. Kills timelines.",real:"<strong>In your work:</strong> The SE said 'trial by fire' — which means things will move fast. Watch for feature requests that weren't in the original plan and flag them."},
+{name:"Requirements vs. User Stories",tag:"core",def:"Requirements = what the business needs (system-centric). User stories = how a user experiences the solution (human-centric). Different formats for different audiences.",real:"<strong>In your work:</strong> When talking to the SE, use user stories. When talking to devs or documenting specs, use requirements."},
+{name:"Definition of Done",tag:"core",def:"A universal checklist that every user story must pass before it's considered complete — separate from acceptance criteria, which are story-specific.",real:"<strong>In your work:</strong> Agree on this with the SE upfront. 'Done' means tested, documented, and signed off — not just 'built.'"},
+{name:"Executive Summary (4-slide structure)",tag:"comms",def:"A tight presentation format: Slide 1 = overview, Slide 2 = direction + business case, Slide 3 = timeline + phases, Slide 4 = close + call to action. Assume you may only get one slide.",real:"<strong>In your work:</strong> When the SE pitches the app to investors or customers, you might help prepare this. Know the format cold."},
+{name:"Business Case",tag:"comms",def:"The justification for a project — why it matters to leadership, supported by data (costs, value, risks, benchmarks). Part of any executive presentation.",real:"<strong>In your work:</strong> The SE's app needs a business case for every potential customer. As BA, you help build that argument."},
+{name:"Personas",tag:"comms",def:"Fictional but research-based profiles of the types of users who will interact with a system. Used to make user stories concrete and avoid the 'undefined user' mistake.",real:"<strong>In your work:</strong> Who exactly uses the discovery app? A junior SE at a startup? A senior SE at an enterprise? Different personas = different needs."},
+{name:"Version Control (for docs)",tag:"comms",def:"A system for tracking changes to documents, process maps, and requirements over time. Ensures everyone is working from the same approved version.",real:"<strong>In your work:</strong> As the app evolves, keep versioned copies of process maps and requirements. 'The old version of the spec' is how projects go wrong."},
+];
+
+let activeTag='all';
+
+function render(list){
+  const c=document.getElementById('cards');
+  const ct=document.getElementById('count');
+  c.innerHTML='';
+  ct.textContent=list.length+' term'+(list.length!==1?'s':'');
+  list.forEach(t=>{
+    const d=document.createElement('div');
+    d.className='term-card';
+    d.innerHTML=`<div class="term-header"><span class="term-name">${t.name}</span><span class="tag tag-${t.tag}">${tagLabel(t.tag)}</span></div><p class="def">${t.def}</p><p class="real">${t.real}</p>`;
+    c.appendChild(d);
+  });
+}
+
+function tagLabel(t){
+  return{core:'Core BA',discovery:'Discovery',process:'Process',data:'Data',testing:'Testing',comms:'Comms'}[t]||t;
+}
+
+function filter(){
+  const q=document.getElementById('search').value.toLowerCase();
+  let list=terms;
+  if(activeTag!=='all') list=list.filter(t=>t.tag===activeTag);
+  if(q) list=list.filter(t=>t.name.toLowerCase().includes(q)||t.def.toLowerCase().includes(q)||t.real.toLowerCase().includes(q));
+  render(list);
+}
+
+function setTag(tag,btn){
+  activeTag=tag;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  filter();
+}
+
+render(terms);
+</script>
